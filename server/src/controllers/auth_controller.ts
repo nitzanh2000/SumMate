@@ -1,9 +1,12 @@
+import ms from "ms";
 import bcrypt from "bcrypt";
+import moment from "moment";
 import jwt from "jsonwebtoken";
 import { User } from "../dtos/user";
 import { Request, Response } from "express";
 import { deleteFile, uploadFile } from "../utils/multer";
 import { UserModel } from "../models/user_model";
+import { OAuth2Client } from "google-auth-library";
 import { createNewUser } from "../services/user_service";
 import { generateAndSaveTokens } from "../utils/auth/auth";
 
@@ -143,4 +146,42 @@ export const refreshToken = async (req: Request, res: Response) => {
       }
     }
   );
+};
+
+export const googleLogin = async (req: Request, res: Response) => {
+  const client = new OAuth2Client();
+
+  const credential = req.body.credential;
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const email = payload?.email;
+    let user = await UserModel.findOne({ email: email });
+
+    if (user == null) {
+      user = await UserModel.create({
+        email: email,
+        username: payload?.name,
+        imgUrl: payload?.picture,
+        password: "google-signin",
+      });
+    }
+
+    const { accessToken, refreshToken, userTokens } =
+      await generateAndSaveTokens(user);
+
+    user.tokens = userTokens;
+    await user.save();
+
+    res.status(200).send({
+      accessToken,
+      refreshToken,
+      user,
+    });
+  } catch (err) {
+    return res.status(500).send("failed to sign in with google");
+  }
 };
