@@ -1,11 +1,12 @@
 import { useState } from "react";
 import PostActions from "./PostActions";
 import { Post } from "../interfaces/post";
+import DropzoneComponent from "./Dropzone";
 import { IMAGES_URL } from "../constants/files";
 import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
 import { useUserContext } from "../context/UserContext";
 import { usePostsContext } from "../context/PostsContext";
-import { updatePost } from "../services/posts";
+import { deletePostById, updatePost } from "../services/posts";
 
 interface PostProps {
   post: Post;
@@ -14,7 +15,10 @@ interface PostProps {
 }
 
 const PostComponent = ({ post, enableChanges, inFeed }: PostProps) => {
-  const [description] = useState(post.content);
+  const [isEditing, setIsEditing] = useState(false);
+  const [description, setDescription] = useState(post.content);
+  const [editedPhoto, setEditedPhoto] = useState<File | null>();
+  const [editedPhotoURL, setEditedPhotoURL] = useState<string | null>();
   const { user } = useUserContext() ?? {};
   const { setPosts, posts } = usePostsContext() ?? {};
 
@@ -22,6 +26,17 @@ const PostComponent = ({ post, enableChanges, inFeed }: PostProps) => {
     return post.likedBy.find((currUser) => currUser?._id === user?._id)
       ? true
       : false;
+  };
+  const onEditSave = () => {
+    updatePost(post._id, { photo: editedPhoto, content: description });
+    setEditedPhotoURL(editedPhoto ? URL.createObjectURL(editedPhoto) : null);
+  };
+
+  const deletePost = () => {
+    deletePostById(post._id);
+    setPosts?.(
+      posts?.filter((currentPost) => currentPost._id !== post._id) ?? []
+    );
   };
 
   const onLikeToggle = () => {
@@ -57,6 +72,12 @@ const PostComponent = ({ post, enableChanges, inFeed }: PostProps) => {
     );
   };
 
+  const handleSave = () => {
+    onEditSave();
+
+    setIsEditing(false);
+  };
+
   return (
     <div
       className="post card mb-3"
@@ -83,14 +104,16 @@ const PostComponent = ({ post, enableChanges, inFeed }: PostProps) => {
             <button
               className="btn btn-light"
               style={{ border: "none", background: "transparent", borderRadius: "50px" }}
+              onClick={() => setIsEditing(!isEditing)} // Trigger edit mode
             >
               <FaRegEdit size={20} />
             </button>
           )}
-          {(
+          {deletePost && (
             <button
               className="btn btn-light"
               style={{ border: "none", background: "transparent" }}
+              onClick={deletePost} // Trigger deletePost function on click
             >
               <FaRegTrashAlt size={20} />
             </button>
@@ -121,24 +144,43 @@ const PostComponent = ({ post, enableChanges, inFeed }: PostProps) => {
           />
           <span className="ml-3">{post.owner.username}</span>
         </div>
-        <div
-          {...(inFeed
-            ? {
-              style: { cursor: "pointer" },
-            }
-            : {})}
-          className="hover-shadow justify-content-center row"
-        >
-          <img
-            style={{ height: "250px" }}
-            src={IMAGES_URL + post.photoSrc}
-            alt="Post"
-            className="img-fluid mb-1"
-          />
-          <p className="text-center">{description}</p>
-        </div>
 
-        {
+        {isEditing ? (
+          <div>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="form-control mb-3"
+              rows={3} // Adjusted to make it fit better in the card
+              style={{ height: "40px", resize: "none" }} // Set height to fit
+            />
+            <DropzoneComponent
+              onFileSelect={(file) => setEditedPhoto(file)}
+              selectedFile={editedPhoto ?? null}
+            />
+            <button className="btn btn-primary mt-3 w-100" style={{ borderRadius: "50px" }} onClick={handleSave}>
+              Save
+            </button>
+          </div>
+        ) : (
+          <div
+            {...(inFeed
+              ? {
+                style: { cursor: "pointer" },
+              }
+              : {})}
+            className="hover-shadow justify-content-center row"
+          >
+            <img
+              style={{ height: "250px" }}
+              src={editedPhotoURL ? editedPhotoURL : IMAGES_URL + post.photoSrc}
+              alt="Post"
+              className="img-fluid mb-1"
+            />
+            <p className="text-center">{description}</p>
+          </div>
+        )}
+        {!isEditing &&
           <PostActions
             postId={post._id}
             comments={post.comments}
