@@ -74,6 +74,29 @@ describe("Posts", () => {
     expect({ owner: owner._id, content }).toEqual(post);
   });
 
+  test("Create Post", async () => {
+    const form = new FormData();
+    form.append("post", JSON.stringify(post));
+
+    const res = await request(await appPromise, { headers })
+      .post("/posts/")
+      .set(headers)
+      .set(
+        "Content-Type",
+        `multipart/form-data; boundary=${form.getBoundary()}`
+      )
+      .send(form.getBuffer());
+    expect(res.statusCode).toEqual(201);
+
+    const { owner: ownerDB, content: contentDB } = await PostModel.findOne({
+      owner: post.owner,
+    });
+    expect({
+      owner: ownerDB._id.toString(),
+      content: contentDB,
+    }).toEqual(post);
+  });
+
   test("Update Post", async () => {
     await PostModel.create(post);
     const id = (await PostModel.findOne({ owner: post.owner }))._id;
