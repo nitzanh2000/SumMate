@@ -46,6 +46,12 @@ const Navbar = () => {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto">
             <li className="nav-item mx-3">
+              <Link to="/" className="nav-link">Home</Link>
+            </li>
+            <li className="nav-item mx-3">
+              <Link to="/add-post" className="nav-link">New Post</Link>
+            </li>
+            <li className="nav-item mx-3">
               <button className="nav-link btn btn-link" onClick={handleLogout}>Logout</button>
             </li>
           </ul>
