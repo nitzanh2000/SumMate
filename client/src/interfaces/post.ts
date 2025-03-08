@@ -10,6 +10,12 @@ export interface Post {
   comments: PostComment[];
 }
 
+export interface CreatePost {
+  owner: string;
+  content: string;
+  photo?: File | null;
+}
+
 export interface UpdatePost {
   content?: string;
   photo?: File | null;

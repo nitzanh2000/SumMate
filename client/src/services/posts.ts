@@ -1,4 +1,4 @@
-import { UpdatePost } from "../interfaces/post";
+import { CreatePost, UpdatePost } from "../interfaces/post";
 import { createAxiosInstance } from "../config/axiosInstance";
 
 const axiosInstance = createAxiosInstance(
@@ -7,6 +7,23 @@ const axiosInstance = createAxiosInstance(
 
 export const getPosts = async () => {
   return (await axiosInstance.get(`/`)).data;
+};
+
+export const createPost = async (post: CreatePost) => {
+  const formData = new FormData();
+  const { photo, ...postInfo } = post;
+
+  if (photo) {
+    formData.append("file", photo);
+  }
+
+  formData.append("post", JSON.stringify(postInfo));
+
+  await axiosInstance.post(`/`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 };
 
 export const updatePost = async (
