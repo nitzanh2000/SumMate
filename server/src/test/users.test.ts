@@ -70,4 +70,24 @@ describe("Users", () => {
     });
   });
 
+  
+  test("Update User", async () => {
+    await UserModel.create(user);
+    const id = (await UserModel.findOne({ email: user.email }))._id;
+
+    const res = await request(await appPromise, { headers })
+      .put("/users/" + id)
+      .set(headers)
+      .send({ username: "test2" });
+    expect(res.statusCode).toEqual(201);
+    const { email, password, username } = await UserModel.findOne({
+      username: "test2",
+    });
+    expect({ email, password, username }).toEqual({
+      username: "test2",
+      email: user.email,
+      password: user.password,
+    });
+  });
+
 });

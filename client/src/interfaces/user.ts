@@ -6,3 +6,9 @@ export interface User {
   tokens?: string[];
   photo?: string;
 }
+
+export interface UpdateUser {
+  username?: string;
+  email?: string;
+  photo?: File | null;
+}
