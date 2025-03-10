@@ -10,6 +10,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { useUserContext } from "./context/UserContext";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Summarize from "./pages/Summarize";
 
 function App() {
   const { user, loadingUser } = useUserContext() ?? {};
@@ -40,6 +41,7 @@ function App() {
                 <Route path="/add-post" element={<AddPost></AddPost>} />
                 <Route path="/profile/:id" element={<Profile></Profile>} />
                 <Route path="/post/:id" element={<PostDetails></PostDetails>} />
+                <Route path="/summarize" element={<Summarize></Summarize>} />
               </>
             )}
           </Routes>
