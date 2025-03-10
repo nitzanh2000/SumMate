@@ -25,6 +25,9 @@ const appPromise: Promise<any> = new Promise((resolve, reject) => {
 
       app.use(authenticateToken);
 
+      const AIRouter = require("./routes/AI_route");
+      app.use("/AI", AIRouter);
+
       const authRouter = require("./routes/auth_route");
       app.use("/auth", authRouter);
 
