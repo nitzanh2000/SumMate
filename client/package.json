@@ -12,6 +12,7 @@
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
     "@react-oauth/google": "^0.12.1",
+    "@rollup/rollup-darwin-arm64": "^4.34.9",
     "axios": "^1.7.9",
     "axios-retry": "^4.5.0",
     "bootstrap": "^5.3.3",

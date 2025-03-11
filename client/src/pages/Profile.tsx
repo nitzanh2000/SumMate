@@ -23,7 +23,7 @@ const Profile = () => {
   };
 
   const filteredPosts = useMemo(
-    () => posts?.filter((post) => post.owner._id === id),
+    () => posts?.filter((post) => post.owner?._id === id),
     [posts, id]
   );
 
