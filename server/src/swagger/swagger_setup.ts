@@ -7,6 +7,13 @@ export const swaggerOptions = {
       description: "API for managing SumMate",
     },
     components: {
+      securitySchemes: {
+        BearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
       schemas: {
         User: {
           type: "object",
@@ -53,6 +60,11 @@ export const swaggerOptions = {
         },
       },
     },
+    security: [
+      {
+        BearerAuth: [],
+      },
+    ],
     paths: {
       "/auth/login": {
         post: {
@@ -498,6 +510,111 @@ export const swaggerOptions = {
             },
             404: {
               description: "Comment not found",
+            },
+          },
+        },
+      },
+      "/users/me": {
+        get: {
+          summary: "Get current user",
+          tags: ["users"],
+          responses: {
+            200: {
+              description: "Current user data",
+              content: {
+                "application/json": {
+                  schema: { $ref: "#/components/schemas/User" },
+                },
+              },
+            },
+            500: {
+              description: "Server error",
+            },
+          },
+        },
+      },
+      "/users/{userId}": {
+        put: {
+          summary: "Update user by ID",
+          tags: ["users"],
+          parameters: [
+            {
+              name: "userId",
+              in: "path",
+              required: true,
+              description: "The ID of the user",
+              schema: {
+                type: "string",
+              },
+            },
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              "multipart/form-data": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    username: { type: "string" },
+                    file: { type: "string", format: "binary" },
+                  },
+                  required: ["username"],
+                },
+              },
+            },
+          },
+          responses: {
+            201: {
+              description: "User updated",
+              content: {
+                "application/json": {
+                  schema: { $ref: "#/components/schemas/User" },
+                },
+              },
+            },
+            400: {
+              description: "Username already exists",
+            },
+            404: {
+              description: "User not found",
+            },
+            500: {
+              description: "Server error",
+            },
+          },
+        },
+      },
+      "/ai/api/improve-text": {
+        post: {
+          summary: "Improve text using AI",
+          tags: ["ai"],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    text: { type: "string" },
+                  },
+                  required: ["text"],
+                },
+              },
+            },
+          },
+          responses: {
+            200: {
+              description: "Improved text",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "string",
+                  },
+                },
+              },
+            },
+            500: {
+              description: "Server error",
             },
           },
         },
