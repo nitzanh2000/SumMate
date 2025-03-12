@@ -9,6 +9,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
+const path = require("path");
 
 dotenv.config();
 const specs = swaggerJsdoc(swaggerOptions);
@@ -50,9 +51,13 @@ const appPromise: Promise<any> = new Promise((resolve, reject) => {
       const usersRouter = require("./routes/users_route");
       app.use("/users", usersRouter);
 
+      app.use(express.static(path.join(__dirname, "./../public/dist/")));
+
       app.use((error, req, res) => {
         console.error(error.stack);
-        res.status(500).send("Something broke!");
+        res.status(200).send({
+          error: error.message,
+        });
       });
 
       resolve(app);
