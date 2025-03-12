@@ -1,4 +1,5 @@
 import { authenticateToken } from "./middlewares/auth_middleware";
+import { swaggerOptions } from "./swagger/swagger_setup";
 
 const dotenv = require("dotenv");
 const morgan = require("morgan");
@@ -6,8 +7,12 @@ const express = require("express");
 const crossOrigin = require("cors");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
+const path = require("path");
 
 dotenv.config();
+const specs = swaggerJsdoc(swaggerOptions);
 
 const appPromise: Promise<any> = new Promise((resolve, reject) => {
   mongoose
@@ -19,7 +24,13 @@ const appPromise: Promise<any> = new Promise((resolve, reject) => {
       app.use(crossOrigin({ origin: "*" }));
       app.use(morgan("dev"));
       app.use(express.static("public"));
-      
+
+      app.use(
+        "/api-docs",
+        swaggerUi.serve,
+        swaggerUi.setup(specs, { explorer: true })
+      );
+
       app.use(bodyParser.json());
       app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -40,9 +51,13 @@ const appPromise: Promise<any> = new Promise((resolve, reject) => {
       const usersRouter = require("./routes/users_route");
       app.use("/users", usersRouter);
 
+      app.use(express.static(path.join(__dirname, "./../public/dist/")));
+
       app.use((error, req, res) => {
         console.error(error.stack);
-        res.status(500).send("Something broke!");
+        res.status(200).send({
+          error: error.message,
+        });
       });
 
       resolve(app);

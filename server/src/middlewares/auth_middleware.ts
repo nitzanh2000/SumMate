@@ -1,7 +1,8 @@
 import jwt from "jsonwebtoken";
 import { NextFunction, Response } from "express";
 
-const ALLOWED_PATHS = ["auth"];
+// TODO: check if path '/' is good
+const ALLOWED_PATHS = ["auth", "/"];
 
 export const authenticateToken = async (
   req: any,

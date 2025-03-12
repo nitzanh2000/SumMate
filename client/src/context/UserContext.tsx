@@ -38,7 +38,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     } catch (err) {
       console.error(err);
     } finally {
-      console.log(user);
       setLoadingUser(false);
     }
   };
