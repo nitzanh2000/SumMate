@@ -23,7 +23,15 @@ const appPromise: Promise<any> = new Promise((resolve, reject) => {
 
       app.use(crossOrigin({ origin: "*" }));
       app.use(morgan("dev"));
-      app.use(express.static("public"));
+
+      app.use("/public", express.static("public"));
+      app.use("/storage", express.static("storage"));
+      app.use(express.static("front"));
+
+      // Error handling for static files
+      app.use((req, res, next) => {
+        res.status(404).send("File not found");
+      });
 
       app.use(
         "/api-docs",
@@ -50,8 +58,6 @@ const appPromise: Promise<any> = new Promise((resolve, reject) => {
 
       const usersRouter = require("./routes/users_route");
       app.use("/users", usersRouter);
-
-      app.use(express.static(path.join(__dirname, "./../public/dist/")));
 
       app.use((error, req, res) => {
         console.error(error.stack);
