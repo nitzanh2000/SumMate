@@ -11,8 +11,12 @@ const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const path = require("path");
 
-dotenv.config();
+dotenv.config({
+  path: path.resolve(__dirname, `.env.${process.env.NODE_ENV}`)
+});
 const specs = swaggerJsdoc(swaggerOptions);
+
+console.log(`NODE_ENV=${process.env.NODE_ENV}`);
 
 const appPromise: Promise<any> = new Promise((resolve, reject) => {
   mongoose
@@ -27,6 +31,8 @@ const appPromise: Promise<any> = new Promise((resolve, reject) => {
       app.use("/public", express.static("public"));
       app.use("/storage", express.static("storage"));
       app.use(express.static("front"));
+
+      // app.use(express.static(path.join(__dirname, process.env.CLIENT_FILES)));
 
       // Error handling for static files
       app.use((req, res, next) => {
