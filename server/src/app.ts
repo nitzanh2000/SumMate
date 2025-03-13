@@ -11,9 +11,12 @@ const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const path = require("path");
 
-dotenv.config({
-  path: path.resolve(__dirname, `.env.${process.env.NODE_ENV}`)
-});
+// TODO - fix
+// dotenv.config({
+//   path: path.resolve(__dirname, `.env.${process.env.NODE_ENV}`)
+// });
+
+dotenv.config();
 const specs = swaggerJsdoc(swaggerOptions);
 
 console.log(`NODE_ENV=${process.env.NODE_ENV}`);
