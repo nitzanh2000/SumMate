@@ -2,14 +2,17 @@ import jwt from "jsonwebtoken";
 import { NextFunction, Response } from "express";
 
 // TODO: check if path '/' is good
-const ALLOWED_PATHS = ["auth", "/"];
-
+const ALLOWED_PATHS = ["api/auth", "/"];
+const AUTH_PATH = "/api";
 export const authenticateToken = async (
   req: any,
   res: Response,
   next: NextFunction
 ) => {
-  if (ALLOWED_PATHS.some((path) => req.path.includes(path))) {
+  if (
+    ALLOWED_PATHS.some((path) => req.path.includes(path)) ||
+    !req.path.includes(AUTH_PATH)
+  ) {
     return next();
   } else {
     const authBearer = req.headers["authorization"];
