@@ -26,11 +26,13 @@ afterEach(async () => {
 
 describe("Auth", () => {
   test("Register Successfully", async () => {
+    await UserModel.deleteMany({ email: user.email });
+
     const form = new FormData();
     form.append("user", JSON.stringify(user));
 
     const res = await request(await appPromise)
-      .post("/auth/register")
+      .post("/api/auth/register")
       .set(
         "Content-Type",
         `multipart/form-data; boundary=${form.getBoundary()}`
@@ -55,7 +57,7 @@ describe("Auth", () => {
     await UserModel.create(user);
 
     const res = await request(await appPromise)
-      .post("/auth/register")
+      .post("/api/auth/register")
       .send(user);
 
     expect(res.statusCode).toEqual(500);
@@ -68,7 +70,7 @@ describe("Auth", () => {
     await UserModel.create({ ...user, password: hashedPassword });
 
     const res = await request(await appPromise)
-      .post("/auth/login")
+      .post("/api/auth/login")
       .send({ username: user.username, password: user.password });
 
     expect(res.statusCode).toEqual(200);
@@ -78,7 +80,7 @@ describe("Auth", () => {
 
   test("Login Failed User Doesn't Exist", async () => {
     const res = await request(await appPromise)
-      .post("/auth/login")
+      .post("/api/auth/login")
       .send({ email: user.email, password: user.password });
 
     expect(res.statusCode).toEqual(500);
@@ -112,7 +114,7 @@ describe("Auth - Logout", () => {
 
   test("Logout Successfully", async () => {
     const res = await request(await appPromise)
-      .post("/auth/logout")
+      .post("/api/auth/logout")
       .set("Authorization", "Bearer " + refreshToken);
 
     expect(res.statusCode).toEqual(200);
@@ -121,14 +123,14 @@ describe("Auth - Logout", () => {
   });
 
   test("Logout Failed, No Token Provided", async () => {
-    const res = await request(await appPromise).post("/auth/logout");
+    const res = await request(await appPromise).post("/api/auth/logout");
 
     expect(res.statusCode).toEqual(401);
   });
 
   test("Logout Failed, Invalid Token", async () => {
     const res = await request(await appPromise)
-      .post("/auth/logout")
+      .post("/api/auth/logout")
       .set("Authorization", "Bearer invalidToken");
 
     expect(res.statusCode).toEqual(403);
@@ -140,7 +142,7 @@ describe("Auth - Logout", () => {
       process.env.REFRESH_TOKEN_SECRET
     );
     const res = await request(await appPromise)
-      .post("/auth/logout")
+      .post("/api/auth/logout")
       .set("Authorization", "Bearer " + invalidUserToken);
 
     expect(res.statusCode).toEqual(403);
@@ -174,21 +176,21 @@ describe("Auth - Refresh Token", () => {
 
   test("Refresh Token Successfully", async () => {
     const res = await request(await appPromise)
-      .post("/auth/refresh-token")
+      .post("/api/auth/refresh-token")
       .set("Authorization", "Bearer " + refreshToken);
 
     expect(res.statusCode).toEqual(200);
   });
 
   test("Refresh Token Failed, No Token Provided", async () => {
-    const res = await request(await appPromise).post("/auth/refresh-token");
+    const res = await request(await appPromise).post("/api/auth/refresh-token");
 
     expect(res.statusCode).toEqual(401);
   });
 
   test("Refresh Token Failed, Invalid Token", async () => {
     const res = await request(await appPromise)
-      .post("/auth/refresh-token")
+      .post("/api/auth/refresh-token")
       .set("Authorization", "Bearer invalidToken");
 
     expect(res.statusCode).toEqual(403);
@@ -200,7 +202,7 @@ describe("Auth - Refresh Token", () => {
       process.env.REFRESH_TOKEN_SECRET
     );
     const res = await request(await appPromise)
-      .post("/auth/refresh-token")
+      .post("/api/auth/refresh-token")
       .set("Authorization", "Bearer " + invalidUserToken);
 
     expect(res.statusCode).toEqual(403);

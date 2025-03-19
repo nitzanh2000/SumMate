@@ -48,6 +48,7 @@ const getMe = async (req: Request & { user: User }, res: Response) => {
     const user = await UserModel.findById(req.user._id);
     res.status(200).send(user);
   } catch (error) {
+    console.log(error.message)
     res.status(500).send(error.message);
   }
 };

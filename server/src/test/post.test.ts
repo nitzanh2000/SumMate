@@ -58,7 +58,7 @@ describe("Posts", () => {
   test("Get Many Posts", async () => {
     await PostModel.create(posts);
     const res = await request(await appPromise)
-      .get("/posts")
+      .get("/api/posts")
       .set(headers);
     expect(res.statusCode).toEqual(200);
   });
@@ -67,7 +67,7 @@ describe("Posts", () => {
     await PostModel.create(post);
     const id = (await PostModel.findOne({ owner: post.owner }))._id;
     const res = await request(await appPromise, { headers })
-      .get("/posts/" + id)
+      .get("/api/posts/" + id)
       .set(headers);
     expect(res.statusCode).toEqual(200);
     const { owner, content } = res.body;
@@ -79,7 +79,7 @@ describe("Posts", () => {
     form.append("post", JSON.stringify(post));
 
     const res = await request(await appPromise, { headers })
-      .post("/posts/")
+      .post("/api/posts/")
       .set(headers)
       .set(
         "Content-Type",
@@ -105,7 +105,7 @@ describe("Posts", () => {
     form.append("updatedPostContent", JSON.stringify({ ...post, content: "content2" }));
 
     const res = await request(await appPromise, { headers })
-      .put("/posts/" + id)
+      .put("/api/posts/" + id)
       .set(headers)
       .set("Content-Type", `multipart/form-data; boundary=${form.getBoundary()}`)
       .send(form.getBuffer());
@@ -124,7 +124,7 @@ describe("Posts", () => {
     const id = (await PostModel.findOne({ owner: post.owner }))._id;
 
     const res = await request(await appPromise)
-      .delete("/posts/" + id)
+      .delete("/api/posts/" + id)
       .set(headers);
     expect(res.statusCode).toEqual(200);
 

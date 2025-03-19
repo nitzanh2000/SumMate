@@ -61,7 +61,7 @@ afterEach(async () => {
 describe("Users", () => {
 
   test("Get Me", async () => {
-    const res = await request(await appPromise, { headers }).get("/users/me").set(headers);
+    const res = await request(await appPromise, { headers }).get("/api/users/me").set(headers);
     expect(res.statusCode).toEqual(200);
     const { email, username } = res.body;
     expect({ email, username }).toEqual({
@@ -76,7 +76,7 @@ describe("Users", () => {
     const id = (await UserModel.findOne({ email: user.email }))._id;
 
     const res = await request(await appPromise, { headers })
-      .put("/users/" + id)
+      .put("/api/users/" + id)
       .set(headers)
       .send({ username: "test2" });
     expect(res.statusCode).toEqual(201);

@@ -67,7 +67,7 @@ describe("Comments", () => {
     await CommentModel.create(comment);
 
     const res = await request(await appPromise)
-      .get("/comments")
+      .get("/api/comments")
       .set(headers);
 
     expect(res.statusCode).toEqual(200);
@@ -77,7 +77,7 @@ describe("Comments", () => {
     await CommentModel.create(comment);
 
     const res = await request(await appPromise)
-      .get(`/comments?user=${user._id}`)
+      .get(`/api/comments?user=${user._id}`)
       .set(headers);
 
     expect(res.statusCode).toEqual(200);
@@ -87,7 +87,7 @@ describe("Comments", () => {
     const commentId = (await CommentModel.create(comment))._id;
 
     const res = await request(await appPromise, { headers })
-      .get(`/comments/${commentId}`)
+      .get(`/api/comments/${commentId}`)
       .set(headers);
 
     expect(res.statusCode).toEqual(200);
@@ -98,7 +98,7 @@ describe("Comments", () => {
 
   test("Create Comment", async () => {
     const res = await request(await appPromise, { headers })
-      .post("/comments/")
+      .post("/api/comments/")
       .set(headers)
       .send({ comment, postId: post._id });
 
@@ -120,7 +120,7 @@ describe("Comments", () => {
     const commentId = (await CommentModel.create(comment))._id;
 
     const res = await request(await appPromise, { headers })
-      .put(`/comments/${commentId}`)
+      .put(`/api/comments/${commentId}`)
       .set(headers)
       .send({ content: "content2" });
 
@@ -139,7 +139,7 @@ describe("Comments", () => {
     const commentId = (await CommentModel.create(comment))._id;
 
     const res = await request(await appPromise, { headers })
-      .delete(`/comments/${commentId}`)
+      .delete(`/api/comments/${commentId}`)
       .set(headers);
 
     expect(res.statusCode).toEqual(200);
