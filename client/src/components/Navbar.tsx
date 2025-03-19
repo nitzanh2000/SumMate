@@ -27,7 +27,7 @@ const Navbar = () => {
         <Link className="navbar-brand" to="/">
           <img
             src="/logo.png"
-            alt="SumMate Logo"
+            alt="SumMateLogo"
             className="logo mt-1"
             style={{ height: "50px" }}
           />

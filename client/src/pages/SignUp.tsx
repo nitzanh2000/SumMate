@@ -34,13 +34,13 @@ const SignUp = () => {
       >
         <div className="text-center">
           <img
-            src="/src/assets/logo.png"
-            alt="SumMate Logo"
+            src="/logo.png"
+            alt="SumMateLogo"
             style={{ width: "60px", height: "60px" }}
           /><div>
             <img
-              src="/src/assets/SumMate Text.png"
-              alt="SumMate Logo"
+              src="/SumMate Text.png"
+              alt="SumMateLogo"
               style={{ width: "250px" }}
             />
           </div>

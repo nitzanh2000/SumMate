@@ -50,11 +50,11 @@ const SignIn = () => {
       >
         <div className="text-center mb-2 ">
           <img
-            src="/src/assets/logo.png"
+            src="./logo.png"
             alt="SumMate Logo"
           />
           <img
-            src="/src/assets/SumMate Text.png"
+            src="./SumMate Text.png"
             alt="SumMate Text"
             style={{ width: "250px" }}
           />

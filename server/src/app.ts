@@ -10,6 +10,7 @@ const bodyParser = require("body-parser");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const path = require("path");
+const history = require("connect-history-api-fallback");
 
 dotenv.config();
 const specs = swaggerJsdoc(swaggerOptions);
@@ -23,7 +24,6 @@ const appPromise: Promise<any> = new Promise((resolve, reject) => {
 
       app.use(crossOrigin({ origin: "*" }));
       app.use(morgan("dev"));
-      app.use(express.static("public"));
 
       app.use(
         "/api-docs",
@@ -37,21 +37,40 @@ const appPromise: Promise<any> = new Promise((resolve, reject) => {
       app.use(authenticateToken);
 
       const AIRouter = require("./routes/AI_route");
-      app.use("/AI", AIRouter);
+      app.use("/api/AI", AIRouter);
 
       const authRouter = require("./routes/auth_route");
-      app.use("/auth", authRouter);
+      app.use("/api/auth", authRouter);
 
       const postsRouter = require("./routes/posts_route");
-      app.use("/posts", postsRouter);
+      app.use("/api/posts", postsRouter);
 
       const commentsRouter = require("./routes/comments_route");
-      app.use("/comments", commentsRouter);
+      app.use("/api/comments", commentsRouter);
 
       const usersRouter = require("./routes/users_route");
-      app.use("/users", usersRouter);
+      app.use("/api/users", usersRouter);
 
-      app.use(express.static(path.join(__dirname, "./../public/dist/")));
+      app.use(
+        "/api/images",
+        express.static("public/images", {
+          maxAge: 0,
+          etag: false,
+        })
+      );
+      app.use(history());
+
+      app.use(
+        express.static("front", {
+          maxAge: 0,
+          etag: false,
+        })
+      );
+
+      // Error handling for static files
+      app.use((req, res, next) => {
+        res.status(404).send("File not found");
+      });
 
       app.use((error, req, res) => {
         console.error(error.stack);
