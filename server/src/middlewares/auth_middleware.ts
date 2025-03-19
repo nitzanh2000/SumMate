@@ -25,9 +25,7 @@ export const authenticateToken = async (
     jwt.verify(
       accessToken,
       process.env.ACCESS_TOKEN_SECRET,
-      async (err, user) =>{
-        console.log("#####################################");
-        console.log(user);
+      async (err, user) => {
         if (err) {
           res.status(403).send("Unauthorized");
         } else {
