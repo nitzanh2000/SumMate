@@ -1,1 +1,1 @@
-# SumMate-Base
+# SumMate Project
